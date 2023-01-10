@@ -4,7 +4,8 @@
         <div class="container">
 {#          <a class="navbar-brand" href="index.html">#}
           <a class="navbar-brand" href="{% url 'post_ns:index' %}">
-            <img src="img/logo.png" width="30" height="30" class="d-inline-block align-top" alt="">
+            {% load static %}
+            <img src="static/img/logo.png" width="30" height="30" class="d-inline-block align-top" alt="">
             <!-- тег span используется для добавления нужных стилей отдельным участкам текста -->
             <span style="color:red">Ya</span>tube
           </a>
