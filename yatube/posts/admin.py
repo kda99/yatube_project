@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from .models import Post
+from .models import Group
 
 class PostAdmin(admin.ModelAdmin):
     # Перечисляем поля, которые должны отображаться в админке
