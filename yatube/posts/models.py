@@ -15,8 +15,10 @@ class Post(models.Model):
 
 
 class Group(models.Model):
-    pass
-    # title = models.TextField()
-    # slug = models.TextField()
-    # description = models.TextField()
+    title = models.TextField()
+    slug = models.URLField()
+    description = models.TextField()
+
+    def __str__(self):
+        return self.title
 
