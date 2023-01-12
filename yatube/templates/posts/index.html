@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}
-'Заголовок'
+{{ title }}
 {% endblock %}
 {% block content %}
 {% for post in posts %}
