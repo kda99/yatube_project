@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}
-<title>Главная страница</title>
+<title></title>
 {% endblock %}
 {% block content %}
 {% for post in posts %}
@@ -15,7 +15,7 @@
   </ul>
   <p>{{ post.text }}</p>
   {% if post.group %}
-  <a href="{% url 'post_ns:post' post.group.slug %}">все записи группы</a>
+  <a href="{% url 'posts:group_list' post.group.slug %}">все записи группы</a>
   {% endif %}
   {% if not forloop.last %}<hr>{% endif %}
 {% endfor %}
