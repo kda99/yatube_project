@@ -13,6 +13,8 @@ class Group(models.Model):
         return self.title
 
 
+
+
 class Post(models.Model):
     text = models.TextField(
         'Текст поста',
@@ -34,8 +36,21 @@ class Post(models.Model):
         blank=True,
         null=True,
         verbose_name='Группа',
-        help_text='Группа, к которой будет относиться пост'
+        help_text='Выберите группу'
     )
+    # Поле для картинки (необязательное)
+    image = models.ImageField(
+        'Картинка',
+        upload_to='posts/',
+        blank=True
+    )
+    # Аргумент upload_to указывает директорию,
+    # в которую будут загружаться пользовательские файлы.
+
+    class Meta:
+        ordering = ('-pub_date',)
+        verbose_name = 'Пост'
+        verbose_name_plural = 'Посты'
 
     def __str__(self):
         return self.text[:15]
