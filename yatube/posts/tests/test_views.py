@@ -1,4 +1,9 @@
-from django.test import Client, TestCase
+import shutil
+import tempfile
+
+from django.test import Client, TestCase, override_settings
+from django.conf import settings
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from django import forms
 
@@ -8,8 +13,9 @@ INDEX = reverse('posts:index')
 GROUP_LIST = reverse('posts:group_list', kwargs={'slug': 'test-slug'})
 POST_CREATE = reverse('posts:post_create')
 PAGE_IN_PAGINATOR = 10
+TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
 
-
+@override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
 class PostsPagesTests(TestCase):
     @classmethod
     def setUpClass(cls):
@@ -20,10 +26,24 @@ class PostsPagesTests(TestCase):
             description='test_description',
             slug='test-slug'
         )
+        small_gif = (
+            b'\x47\x49\x46\x38\x39\x61\x02\x00'
+            b'\x01\x00\x80\x00\x00\x00\x00\x00'
+            b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
+            b'\x00\x00\x00\x2C\x00\x00\x00\x00'
+            b'\x02\x00\x01\x00\x00\x02\x02\x0C'
+            b'\x0A\x00\x3B'
+        )
+        cls.uploaded = SimpleUploadedFile(
+            name='small.gif',
+            content=small_gif,
+            content_type='image/gif'
+        )
         cls.post = Post.objects.create(
             text='test_post',
             author=cls.author,
-            group=cls.group
+            group=cls.group,
+            image=cls.uploaded,
         )
 
     def setUp(self):
@@ -35,6 +55,7 @@ class PostsPagesTests(TestCase):
         form_fields = {
             'text': forms.fields.CharField,
             'group': forms.fields.ChoiceField,
+            'image': forms.fields.ImageField,
         }
         for value, expected in form_fields.items():
             with self.subTest(value=value):
@@ -59,9 +80,11 @@ class PostsPagesTests(TestCase):
         post_text_0 = first_object.id
         post_author_0 = first_object.author
         post_group_0 = first_object.group
+        post_image_0 = first_object.image
         self.assertEqual(post_text_0, self.post.pk)
         self.assertEqual(post_author_0, self.author)
         self.assertEqual(post_group_0, self.group)
+        self.assertEqual(post_image_0,  'posts/small.gif')
 
     def test_post_profile_show_correct_context(self):
         """Шаблон profile сформирован с правильным контекстом."""
@@ -70,9 +93,11 @@ class PostsPagesTests(TestCase):
         post_text_0 = first_object.id
         post_author_0 = first_object.author
         post_group_0 = first_object.group
+        post_image_0 = first_object.image
         self.assertEqual(post_text_0, self.post.pk)
         self.assertEqual(post_author_0, self.author)
         self.assertEqual(post_group_0, self.group)
+        self.assertEqual(post_image_0,  'posts/small.gif')
 
     def test_index_page_show_correct_context(self):
         """Шаблон index сформирован с правильным контекстом."""
@@ -81,9 +106,11 @@ class PostsPagesTests(TestCase):
         post_text_0 = first_object.id
         post_author_0 = first_object.author
         post_group_0 = first_object.group
+        post_image_0 = first_object.image
         self.assertEqual(post_text_0, self.post.pk)
         self.assertEqual(post_author_0, self.author)
         self.assertEqual(post_group_0, self.group)
+        self.assertEqual(post_image_0,  'posts/small.gif')
 
     def test_post_another_group(self):
         another_group = Group.objects.create(
