@@ -13,8 +13,6 @@ class Group(models.Model):
         return self.title
 
 
-
-
 class Post(models.Model):
     text = models.TextField(
         'Текст поста',
@@ -54,3 +52,31 @@ class Post(models.Model):
 
     def __str__(self):
         return self.text[:15]
+
+
+class Comment(models.Model):
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        related_name='comments',
+        blank=True,
+        null=True,
+        verbose_name='Коментарий',
+        help_text='Выберите коментарий'
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Автор',
+        related_name='comments',
+    )
+    text = models.TextField(
+        'Текст комментария',
+        help_text='Введите текст комментария'
+    )
+    created = models.DateTimeField(
+        'Дата комментария',
+        auto_now_add=True
+    )
+
+
