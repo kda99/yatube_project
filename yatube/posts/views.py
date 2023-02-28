@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 
 from .models import Post, Group, Comment
-from .forms import PostForm
+from .forms import PostForm, CommentForm
 from .utils import my_paginator
 
 User = get_user_model()
@@ -46,7 +46,7 @@ def post_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     author = post.author
     comments = post.comments.all()
-    form = Comment()
+    form = CommentForm()
     context = {
         'post': post,
         'author': author,
@@ -92,6 +92,7 @@ def post_edit(request, post_id):
 
 @login_required
 def add_comment(request, post_id):
+    post = get_object_or_404(Post, pk=post_id)
     form = CommentForm(request.POST or None)
     if form.is_valid():
         comment = form.save(commit=False)
